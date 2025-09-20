@@ -204,11 +204,11 @@
                 <h3>模糊效果</h3>
                 <div class="control-item">
                     <label for="blurSize">模糊大小: <span id="blurSizeValue" class="value-display">10</span></label>
-                    <input type="range" id="blurSize" min="0" max="100" value="10" step="1">
+                    <input type="range" id="blurSize" min="0" max="50" value="5" step="1">
                 </div>
                 <div class="control-item">
-                    <label for="blurDepth">模糊深度阈值: <span id="blurDepthValue" class="value-display">0.0</span></label>
-                    <input type="range" id="blurDepth" min="0" max="1" value="0" step="0.01">
+                    <label for="blurDepth">模糊深度阈值: <span id="blurDepthValue" class="value-display">0.25</span></label>
+                    <input type="range" id="blurDepth" min="0" max="1" value="0.25" step="0.01">
                 </div>
                 <div class="control-item">
                     <label for="depthImageBlurSize">深度图模糊: <span id="depthImageBlurSizeValue" class="value-display">50</span></label>
@@ -670,6 +670,9 @@
             let targetX = 0, targetY = 0;
             let currentX = parseFloat(xSlider.value), currentY = parseFloat(ySlider.value);
             const alpha = 0.15; // 低通滤波系数，越大越跟手
+            // 以启用时姿态为零基准
+            let baseBeta = null, baseGamma = null; // 记录启用后的首帧姿态
+            let startXAtEnable = parseFloat(xSlider.value), startYAtEnable = parseFloat(ySlider.value); // 启用时滑块的基准值
 
             function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
 
@@ -688,7 +691,7 @@
             sensSlider.addEventListener('input', updateSensitivityUI);
             updateSensitivityUI();
 
-            // 将设备方向映射到 [-0.5, 0.5]
+            // 将设备方向(或相对变化)映射到 [-0.5, 0.5]
             // 使用 gamma(水平左右) -> x_diff, beta(前后俯仰) -> y_diff
             // 依据屏幕方向进行简单适配
             function orientationToDiff(beta, gamma) {
@@ -708,9 +711,6 @@
                     const t = x; x = -y; y = t;
                 }
 
-                // 限制到滑块范围
-                x = clamp(x, parseFloat(xSlider.min), parseFloat(xSlider.max));
-                y = clamp(y, parseFloat(ySlider.min), parseFloat(ySlider.max));
                 return { x, y };
             }
 
@@ -718,9 +718,24 @@
                 // 某些浏览器只提供 webkitCompassHeading 等，这里主要用 beta/gamma
                 const beta = (typeof e.beta === 'number') ? e.beta : 0;
                 const gamma = (typeof e.gamma === 'number') ? e.gamma : 0;
-                const { x, y } = orientationToDiff(beta, gamma);
-                targetX = x;
-                targetY = y;
+                // 首次读数作为零基准，避免启用瞬间跳变
+                if (baseBeta === null || baseGamma === null) {
+                    baseBeta = beta;
+                    baseGamma = gamma;
+                    // 保持当前目标为启用时滑块值
+                    targetX = startXAtEnable;
+                    targetY = startYAtEnable;
+                    return;
+                }
+
+                // 使用相对变化值驱动，围绕启用时滑块值偏移
+                const dBeta = beta - baseBeta;
+                const dGamma = gamma - baseGamma;
+                const { x, y } = orientationToDiff(dBeta, dGamma); // 这里返回的是相对偏移量
+                const minX = parseFloat(xSlider.min), maxX = parseFloat(xSlider.max);
+                const minY = parseFloat(ySlider.min), maxY = parseFloat(ySlider.max);
+                targetX = clamp(startXAtEnable + x, minX, maxX);
+                targetY = clamp(startYAtEnable + y, minY, maxY);
             }
 
             function animate() {
@@ -759,6 +774,11 @@
                 // 初始化当前与目标
                 currentX = parseFloat(xSlider.value);
                 currentY = parseFloat(ySlider.value);
+                startXAtEnable = currentX;
+                startYAtEnable = currentY;
+                // 清空基准，等待首帧姿态设零
+                baseBeta = null;
+                baseGamma = null;
                 targetX = currentX;
                 targetY = currentY;
                 animate();
@@ -772,6 +792,8 @@
                 window.removeEventListener('deviceorientation', onDeviceOrientation, true);
                 if (rafId) cancelAnimationFrame(rafId);
                 rafId = null;
+                baseBeta = null;
+                baseGamma = null;
             }
 
             btn.addEventListener('click', async () => {
