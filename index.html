@@ -139,7 +139,7 @@
         <button id="uploadCanvasBtn">上传渲染内容</button>
         <!-- 渲染画布 -->
         <div class="canvas-container">
-            <canvas id="glCanvas" width="1440" height="2560"></canvas>
+            <canvas id="glCanvas"></canvas>
         </div>
         
         <!-- 控制参数 -->
@@ -506,6 +506,38 @@
                 const img = new Image();
                 img.onload = function() {
                     textures[textureKey] = createTexture(img);
+
+                    // 记录纹理尺寸
+                    const w = img.naturalWidth || img.width || 0;
+                    const h = img.naturalHeight || img.height || 0;
+                    if (textureKey === 'image') {
+                        textures.imageWidth = w;
+                        textures.imageHeight = h;
+                    } else if (textureKey === 'depth') {
+                        textures.depthWidth = w;
+                        textures.depthHeight = h;
+                    }
+
+                    // 自适应调整画布分辨率：优先使用原图尺寸；如未提供原图则使用深度图尺寸
+                    (function adjustCanvasSize() {
+                        const canvas = document.getElementById('glCanvas');
+                        if (!canvas) return;
+                        let targetW = 0, targetH = 0;
+                        if (textures.imageWidth && textures.imageHeight) {
+                            targetW = textures.imageWidth;
+                            targetH = textures.imageHeight;
+                        } else if (textures.depthWidth && textures.depthHeight) {
+                            targetW = textures.depthWidth;
+                            targetH = textures.depthHeight;
+                        }
+                        if (targetW > 0 && targetH > 0) {
+                            // 仅当变化时再设置，避免无谓重绘
+                            if (canvas.width !== targetW || canvas.height !== targetH) {
+                                canvas.width = Math.floor(targetW);
+                                canvas.height = Math.floor(targetH);
+                            }
+                        }
+                    })();
 
                     const preview = document.getElementById(previewId);
                     preview.src = e.target.result;
