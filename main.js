@@ -334,8 +334,8 @@ function setupDragControls() {
         const rangeMin = parseFloat(xSlider.min); 
         const rangeMax = parseFloat(xSlider.max);
         const range = rangeMax - rangeMin;
-        const deltaX = (-dx / canvas.clientWidth) * range;
-        const deltaY = (-dy / canvas.clientHeight) * range;
+        const deltaX = (-dx * 2 / canvas.clientWidth) * range;
+        const deltaY = (-dy * 2 / canvas.clientHeight) * range;
         return { deltaX, deltaY };
     }
 
