@@ -35,6 +35,9 @@ export const fragmentShaderSource = `
     uniform float u_blurSize;
     uniform float u_blurDepth;
     uniform float u_depthImageBlurSize;
+    uniform float u_maxScale;
+    uniform float u_centerX;
+    uniform float u_centerY;
     
     uniform vec3 u_borderColor;
     uniform float u_borderSizeX, u_borderSizeY;
@@ -82,6 +85,10 @@ export const fragmentShaderSource = `
         float yOffset = (depthMap.r - 0.5 + u_protrude) * ((valueIdY) * 2.0 / u_threshold);
         vec2 fake3d = vec2(uv.x + xOffset, uv.y + yOffset);
 
+        float depthScale = mix(1.0, u_maxScale, clamp(depthMap.r, 0.0, 1.0));
+        vec2 texCenter = vec2(u_centerX, u_centerY);
+        vec2 scaledFake3d = (fake3d - texCenter) / depthScale + texCenter;
+
         if((depthMap.r - 0.5 + u_protrude < 0.) && 
             (fractCoord.x < u_borderSizeX || fractCoord.y < u_borderSizeY || 
             fractCoord.x > (1. - u_borderSizeX) || fractCoord.y > (1. - u_borderSizeY))) {
@@ -89,9 +96,8 @@ export const fragmentShaderSource = `
         }
 
         vec4 color = depthMap.r < u_blurDepth ? 
-            convolute(mirrored(fake3d), gaussian_blur, u_blurSize) : 
-            texture2D(g_Texture1, fake3d);
-        
+            convolute(mirrored(scaledFake3d), gaussian_blur, u_blurSize) : 
+            texture2D(g_Texture1, scaledFake3d);
         return color;
     }
     

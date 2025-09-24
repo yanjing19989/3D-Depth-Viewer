@@ -60,7 +60,7 @@ function getUniforms() {
         'g_Texture0', 'g_Texture1', 'g_Texture2', 'g_Screen',
         'u_threshold', 'u_protrude', 'u_x_diff', 'u_y_diff',
         'u_scaleX', 'u_scaleY', 'u_offsetX', 'u_offsetY',
-        'u_blurSize', 'u_blurDepth', 'u_depthImageBlurSize',
+    'u_blurSize', 'u_blurDepth', 'u_depthImageBlurSize', 'u_maxScale', 'u_centerX', 'u_centerY',
         'u_borderColor', 'u_borderSizeX', 'u_borderSizeY'
     ];
     
@@ -153,6 +153,18 @@ function render() {
     gl.uniform1f(uniforms.u_blurSize, parseFloat(document.getElementById('blurSize').value));
     gl.uniform1f(uniforms.u_blurDepth, parseFloat(document.getElementById('blurDepth').value));
     gl.uniform1f(uniforms.u_depthImageBlurSize, parseFloat(document.getElementById('depthImageBlurSize').value));
+    // 传递最大放大倍率
+    const maxScaleEl = document.getElementById('maxScale');
+    if (maxScaleEl) {
+        gl.uniform1f(uniforms.u_maxScale, parseFloat(maxScaleEl.value));
+    }
+    // 传递缩放中心
+    const centerXEl = document.getElementById('centerX');
+    const centerYEl = document.getElementById('centerY');
+    if (centerXEl && centerYEl) {
+        gl.uniform1f(uniforms.u_centerX, parseFloat(centerXEl.value));
+        gl.uniform1f(uniforms.u_centerY, parseFloat(centerYEl.value));
+    }
     
     const borderColorHex = document.getElementById('borderColor').value;
     const borderColorRgb = hexToRgb(borderColorHex);
@@ -223,7 +235,8 @@ function setupControls() {
     const controls = [
         'threshold', 'protrude', 'x_diff', 'y_diff',
         'scaleX', 'scaleY', 'offsetX', 'offsetY',
-        'blurSize', 'blurDepth', 'depthImageBlurSize',
+    'blurSize', 'blurDepth', 'depthImageBlurSize', 'maxScale',
+    'centerX', 'centerY',
         'borderSizeX', 'borderSizeY'
     ];
     
