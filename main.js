@@ -286,34 +286,22 @@ function setupSidebarControls() {
     const rightSidebar = document.getElementById('rightSidebar');
     const toggleLeftBtn = document.getElementById('toggleLeftSidebar');
     const toggleRightBtn = document.getElementById('toggleRightSidebar');
-    const closeLeftBtn = document.getElementById('closeLeftSidebar');
-    const closeRightBtn = document.getElementById('closeRightSidebar');
     
     // 左侧栏控制
     toggleLeftBtn.addEventListener('click', () => {
-        leftSidebar.classList.toggle('open');
-    });
-    
-    closeLeftBtn.addEventListener('click', () => {
-        leftSidebar.classList.remove('open');
+        if (leftSidebar.classList.contains('open')) {
+            leftSidebar.classList.remove('open');
+        } else {
+            leftSidebar.classList.toggle('open');
+        }
     });
     
     // 右侧栏控制
     toggleRightBtn.addEventListener('click', () => {
-        rightSidebar.classList.toggle('open');
-    });
-    
-    closeRightBtn.addEventListener('click', () => {
-        rightSidebar.classList.remove('open');
-    });
-    
-    // 点击侧栏外部关闭
-    document.addEventListener('click', (e) => {
-        if (!leftSidebar.contains(e.target) && !toggleLeftBtn.contains(e.target)) {
-            leftSidebar.classList.remove('open');
-        }
-        if (!rightSidebar.contains(e.target) && !toggleRightBtn.contains(e.target)) {
+        if (rightSidebar.classList.contains('open')) {
             rightSidebar.classList.remove('open');
+        } else {
+            rightSidebar.classList.toggle('open');
         }
     });
     

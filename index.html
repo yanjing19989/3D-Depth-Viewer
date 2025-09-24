@@ -17,8 +17,7 @@
     <!-- 左侧栏：图像加载 -->
     <div class="sidebar" id="leftSidebar">
         <div class="sidebar-header">
-            <div class="sidebar-title">图像加载</div>
-            <button class="close-btn" id="closeLeftSidebar">×</button>
+            <div class="sidebar-title-left">图像加载</div>
         </div>
         <div class="load-images">
             <div class="image-inputs">
@@ -44,7 +43,6 @@
     <div class="sidebar right" id="rightSidebar">
         <div class="sidebar-header">
             <div class="sidebar-title">参数设置</div>
-            <button class="close-btn" id="closeRightSidebar">×</button>
         </div>
         <div class="controls">
             <!-- 3D效果参数 -->
@@ -107,7 +105,7 @@
                 <h3>模糊效果</h3>
                 <div class="control-item">
                     <label for="blurSize">模糊大小: <span id="blurSizeValue" class="value-display">10</span></label>
-                    <input type="range" id="blurSize" min="0" max="50" value="5" step="1">
+                    <input type="range" id="blurSize" min="0" max="50" value="5" step="0.5">
                 </div>
                 <div class="control-item">
                     <label for="blurDepth">模糊深度阈值: <span id="blurDepthValue" class="value-display">0.25</span></label>
