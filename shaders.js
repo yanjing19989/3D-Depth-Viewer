@@ -36,6 +36,8 @@ export const fragmentShaderSource = `
     uniform float u_blurDepth;
     uniform float u_depthImageBlurSize;
     uniform float u_maxScale;
+    uniform float u_centerX;
+    uniform float u_centerY;
     
     uniform vec3 u_borderColor;
     uniform float u_borderSizeX, u_borderSizeY;
@@ -84,7 +86,7 @@ export const fragmentShaderSource = `
         vec2 fake3d = vec2(uv.x + xOffset, uv.y + yOffset);
 
         float depthScale = mix(1.0, u_maxScale, clamp(depthMap.r, 0.0, 1.0));
-        vec2 texCenter = vec2(0.5, 0.5);
+        vec2 texCenter = vec2(u_centerX, u_centerY);
         vec2 scaledFake3d = (fake3d - texCenter) / depthScale + texCenter;
 
         if((depthMap.r - 0.5 + u_protrude < 0.) && 
