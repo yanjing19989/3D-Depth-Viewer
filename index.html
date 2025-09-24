@@ -7,62 +7,233 @@
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background: #222;
             color: white;
             font-family: Arial, sans-serif;
+            overflow-x: hidden;
         }
         h2 {
             margin-top: 0; 
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 侧栏样式 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            height: 100vh;
+            width: 350px;
+            background: rgba(51, 51, 51, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .sidebar.right {
+            right: 0;
+            transform: translateX(100%);
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(76, 175, 80, 0.8);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: rgba(76, 175, 80, 1);
+            transform: scale(1.1);
+        }
+        
+        .sidebar-toggle::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #4CAF50;
+            border-radius: 50%;
+            top: 8px;
+            right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .toggle-left {
+            left: 20px;
+        }
+        
+        .toggle-right {
+            right: 20px;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 15px;
+        }
+        
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            color: #fff;
+        }
+        
+        /* 移动设备优化 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 90vw;
+                max-width: 350px;
+            }
+            
+            .sidebar-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 16px;
+            }
+            
+            .main-title {
+                font-size: 18px;
+                padding: 8px 16px;
+                top: 15px;
+            }
+        }
+        
+        /* 滚动条样式 */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(68, 68, 68, 0.3);
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(76, 175, 80, 0.6);
+            border-radius: 3px;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(76, 175, 80, 0.8);
         }
         
         .canvas-container {
             text-align: center;
-            margin: 20px 0;
+            margin: 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         canvas {
             border: 2px solid #444;
-            max-width: 100%;
-            height: auto;
+            max-width: calc(100vw - 40px);
+            max-height: calc(100vh - 40px);
             cursor: grab;
         }
         
+        .main-title {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            background: rgba(34, 34, 34, 0.9);
+            padding: 10px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            margin: 0;
+        }
+        
         .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-            margin: 20px 0;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
         }
         
         .control-group {
-            background: #333;
+            background: rgba(68, 68, 68, 0.3);
             padding: 15px;
             border-radius: 8px;
+            border: 1px solid #555;
         }
         
         .control-group h3 {
             margin-top: 0;
             color: #4CAF50;
+            font-size: 16px;
         }
         
         .control-item {
-            margin: 10px 0;
+            margin: 15px 0;
         }
         
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-size: 14px;
         }
         
         input[type="range"] {
             width: 100%;
-            margin: 5px 0;
+            margin: 8px 0;
         }
         
         input[type="color"] {
@@ -72,11 +243,12 @@
         
         input[type="file"] {
             width: 100%;
-            margin: 5px 0;
+            margin: 8px 0;
             background: #444;
             color: white;
             border: 1px solid #666;
-            padding: 5px;
+            padding: 8px;
+            border-radius: 4px;
         }
         
         .value-display {
@@ -85,49 +257,60 @@
         }
         
         .load-images {
-            background: #444;
+            background: rgba(68, 68, 68, 0.3);
             padding: 20px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            border: 1px solid #555;
         }
         
-        .image-preview {
+        .image-inputs {
             display: flex;
+            flex-direction: column;
             gap: 20px;
-            margin-top: 10px;
+        }
+        
+        .image-input-group {
+            display: flex;
+            flex-direction: column;
         }
         
         .preview-item {
-            flex: 1;
             text-align: center;
+            margin-top: 10px;
         }
         
         .preview-item img {
-            max-width: 200px;
+            max-width: 280px;
             max-height: 150px;
             border: 1px solid #666;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>全息3D图像查看器</h1>
-        <!-- 图像加载区域 -->
-        <button onclick="window.location.href = '/'" >
-                返回主页
-        </button>
-        <br></br>
+    <!-- 悬浮侧栏切换按钮 -->
+    <button class="sidebar-toggle toggle-left" id="toggleLeftSidebar">📁</button>
+    <button class="sidebar-toggle toggle-right" id="toggleRightSidebar">⚙️</button>
+    
+    <!-- 主标题 -->
+    <h1 class="main-title">全息3D图像查看器</h1>
+    
+    <!-- 左侧栏：图像加载 -->
+    <div class="sidebar" id="leftSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">图像加载</div>
+            <button class="close-btn" id="closeLeftSidebar">×</button>
+        </div>
         <div class="load-images">
-            <h2>加载图像</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div>
+            <div class="image-inputs">
+                <div class="image-input-group">
                     <label for="imageFile">原始图像:</label>
                     <input type="file" id="imageFile" accept="image/*">
                     <div class="preview-item">
                         <img id="imagePreview" style="display: none;">
                     </div>
                 </div>
-                <div>
+                <div class="image-input-group">
                     <label for="depthFile">深度图:</label>
                     <input type="file" id="depthFile" accept="image/*">
                     <div class="preview-item">
@@ -136,13 +319,14 @@
                 </div>
             </div>
         </div>
-        <button id="uploadCanvasBtn">上传渲染内容</button>
-        <!-- 渲染画布 -->
-        <div class="canvas-container">
-            <canvas id="glCanvas"></canvas>
+    </div>
+    
+    <!-- 右侧栏：参数控制 -->
+    <div class="sidebar right" id="rightSidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">参数设置</div>
+            <button class="close-btn" id="closeRightSidebar">×</button>
         </div>
-        
-        <!-- 控制参数 -->
         <div class="controls">
             <!-- 3D效果参数 -->
             <div class="control-group">
@@ -233,6 +417,14 @@
             </div>
         </div>
     </div>
+    
+    <!-- 主内容区域：画布 -->
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="glCanvas"></canvas>
+        </div>
+    </div>
+    
     <script>
         // WebGL上下文和着色器程序
         let gl;
@@ -614,6 +806,55 @@
         
         // 页面加载完成后初始化
         window.addEventListener('load', init);
+        
+        // 侧栏控制
+        function setupSidebarControls() {
+            const leftSidebar = document.getElementById('leftSidebar');
+            const rightSidebar = document.getElementById('rightSidebar');
+            const toggleLeftBtn = document.getElementById('toggleLeftSidebar');
+            const toggleRightBtn = document.getElementById('toggleRightSidebar');
+            const closeLeftBtn = document.getElementById('closeLeftSidebar');
+            const closeRightBtn = document.getElementById('closeRightSidebar');
+            
+            // 左侧栏控制
+            toggleLeftBtn.addEventListener('click', () => {
+                leftSidebar.classList.toggle('open');
+            });
+            
+            closeLeftBtn.addEventListener('click', () => {
+                leftSidebar.classList.remove('open');
+            });
+            
+            // 右侧栏控制
+            toggleRightBtn.addEventListener('click', () => {
+                rightSidebar.classList.toggle('open');
+            });
+            
+            closeRightBtn.addEventListener('click', () => {
+                rightSidebar.classList.remove('open');
+            });
+            
+            // 点击侧栏外部关闭
+            document.addEventListener('click', (e) => {
+                if (!leftSidebar.contains(e.target) && !toggleLeftBtn.contains(e.target)) {
+                    leftSidebar.classList.remove('open');
+                }
+                if (!rightSidebar.contains(e.target) && !toggleRightBtn.contains(e.target)) {
+                    rightSidebar.classList.remove('open');
+                }
+            });
+            
+            // ESC键关闭侧栏
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    leftSidebar.classList.remove('open');
+                    rightSidebar.classList.remove('open');
+                }
+            });
+        }
+        
+        // 在页面加载时设置侧栏控制
+        window.addEventListener('load', setupSidebarControls);
 
         // 交互：在画布上拖拽以调整 x_diff / y_diff
     (function enableDragToAdjustDiff() {
