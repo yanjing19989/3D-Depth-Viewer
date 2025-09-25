@@ -337,8 +337,10 @@ input[type="range"]::-moz-range-thumb {
 
 /* 颜色选择器 */
 input[type="color"] {
-  width: 40px; height: 28px; padding: 0; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--panel-2);
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid var(--border); 
+  background: var(--panel-2);
 }
 
 /* 滚动条微样式（非必须） */
