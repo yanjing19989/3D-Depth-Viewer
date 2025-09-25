@@ -47,32 +47,53 @@
         <div class="controls">
             <!-- 3D效果参数 -->
             <div class="control-group">
-                <h3>3D效果参数</h3>
+                <div class="control-group-header">
+                    <h3>3D效果参数</h3>
+                    <button class="help-btn" data-help="3d-effects">?</button>
+                    <div class="help-popover" role="note" aria-label="3D效果参数说明">
+                        <div class="help-popover-inner">
+                            <strong>3D阈值</strong>: 控制立体层分离阈值，数值越小分层越明显，但会更容易出现伪影。<br>
+                            <strong>突出度</strong>: 前景向外（正）或向内（负）挤出程度。<br>
+                            <strong>深度放大倍率</strong>: 基于近大远小放大图像，增强整体纵深感，倍率一般不易太高。<br>
+                            <strong>X/Y中心</strong>: 以哪个焦点为中心进行深度放大，建议为画面中心/画面最近观察者处。 
+                        </div>
+                    </div>
+                </div>
                 <div class="control-item">
                     <label for="threshold">3D阈值: <span id="thresholdValue" class="value-display">25</span></label>
                     <input type="range" id="threshold" min="5" max="60" value="25" step="1">
                 </div>
                 <div class="control-item">
-                    <label for="protrude">突出程度: <span id="protrudeValue" class="value-display">0</span></label>
+                    <label for="protrude">突出度: <span id="protrudeValue" class="value-display">0</span></label>
                     <input type="range" id="protrude" min="-0.5" max="0.5" value="0" step="0.01">
                 </div>
                 <div class="control-item">
-                    <label for="maxScale">基于深度放大倍率: <span id="maxScaleValue" class="value-display">1.05</span></label>
+                    <label for="maxScale">深度放大倍率: <span id="maxScaleValue" class="value-display">1.05</span></label>
                     <input type="range" id="maxScale" min="1" max="2" value="1.05" step="0.01">
                 </div>
                 <div class="control-item">
-                    <label for="centerX">缩放中心X: <span id="centerXValue" class="value-display">0.50</span></label>
+                    <label for="centerX">X中心: <span id="centerXValue" class="value-display">0.50</span></label>
                     <input type="range" id="centerX" min="0" max="1" value="0.5" step="0.01">
                 </div>
                 <div class="control-item">
-                    <label for="centerY">缩放中心Y: <span id="centerYValue" class="value-display">0.50</span></label>
+                    <label for="centerY">Y中心: <span id="centerYValue" class="value-display">0.50</span></label>
                     <input type="range" id="centerY" min="0" max="1" value="0.5" step="0.01">
                 </div>
             </div>
             
             <!-- 全息显示参数 -->
             <div class="control-group">
-                <h3>全息显示参数</h3>
+                <div class="control-group-header">
+                    <h3>全息显示参数</h3>
+                    <button class="help-btn" data-help="hologram">?</button>
+                    <div class="help-popover" role="note" aria-label="全息显示参数说明">
+                        <div class="help-popover-inner">
+                            <strong>x/y偏转</strong>: 手动视角偏移模拟不同观察角度。<br>
+                            <strong>启用陀螺仪</strong>: 使用设备方向传感器实时驱动视差。<br>
+                            <strong>陀螺仪灵敏度</strong>: 放大/缩小传感器变化影响。 
+                        </div>
+                    </div>
+                </div>
                 <div class="control-item">
                     <label for="x_diff">x偏转: <span id="x_diffValue" class="value-display">0</span></label>
                     <input type="range" id="x_diff" min="-0.5" max="0.5" value="0" step="0.01">
@@ -93,7 +114,16 @@
             
             <!-- 图像变换参数 -->
             <div class="control-group">
-                <h3>图像变换</h3>
+                <div class="control-group-header">
+                    <h3>图像变换</h3>
+                    <button class="help-btn" data-help="transform">?</button>
+                    <div class="help-popover" role="note" aria-label="图像变换参数说明">
+                        <div class="help-popover-inner">
+                            <strong>X/Y缩放</strong>: 对图像在水平/垂直方向进行独立缩放。<br>
+                            <strong>X/Y偏移</strong>: 对图像进行水平/垂直方向平移，用于构图或对齐。 
+                        </div>
+                    </div>
+                </div>
                 <div class="control-item">
                     <label for="scaleX">X缩放: <span id="scaleXValue" class="value-display">1.0</span></label>
                     <input type="range" id="scaleX" min="0" max="2" value="1" step="0.02">
@@ -114,7 +144,17 @@
             
             <!-- 模糊效果参数 -->
             <div class="control-group">
-                <h3>模糊效果</h3>
+                <div class="control-group-header">
+                    <h3>模糊效果</h3>
+                    <button class="help-btn" data-help="blur">?</button>
+                    <div class="help-popover" role="note" aria-label="模糊效果参数说明">
+                        <div class="help-popover-inner">
+                            <strong>模糊大小</strong>: 模拟景深强度（越大越柔）。<br>
+                            <strong>模糊深度阈值</strong>: 超出阈值的深度区域才被模糊。<br>
+                            <strong>深度图模糊</strong>: 平滑深度输入，减少锐利伪影。 
+                        </div>
+                    </div>
+                </div>
                 <div class="control-item">
                     <label for="blurSize">模糊大小: <span id="blurSizeValue" class="value-display">5</span></label>
                     <input type="range" id="blurSize" min="0" max="50" value="5" step="0.5">
@@ -131,7 +171,16 @@
 
             <!-- 边框效果参数 -->
             <div class="control-group">
-                <h3>边框效果</h3>
+                <div class="control-group-header">
+                    <h3>边框效果</h3>
+                    <button class="help-btn" data-help="border">?</button>
+                    <div class="help-popover" role="note" aria-label="边框效果参数说明">
+                        <div class="help-popover-inner">
+                            <strong>边框颜色</strong>: 画面外缘色调统一或突出。<br>
+                            <strong>水平/垂直边框大小</strong>: 填充外边距以改变可视比例。 
+                        </div>
+                    </div>
+                </div>
                 <div class="control-item">
                     <label for="borderColor">边框颜色:<input type="color" id="borderColor" value="#000000"></label>
                 </div>

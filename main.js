@@ -570,10 +570,48 @@ function setupGyroControls() {
     });
 }
 
+// 帮助提示系统（内嵌元素显示/隐藏）
+function setupHelpTooltips() {
+    const groups = document.querySelectorAll('.control-group');
+    const closeAll = () => {
+        groups.forEach(g => {
+            const pop = g.querySelector('.help-popover');
+            if (pop) pop.classList.remove('open');
+        });
+    };
+    groups.forEach(group => {
+        const btn = group.querySelector('.help-btn');
+        const pop = group.querySelector('.help-popover');
+        if (!btn || !pop) return;
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const opened = pop.classList.contains('open');
+            closeAll();
+            if (!opened) {
+                pop.classList.add('open');
+            }
+        });
+        const supportsHover = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+        if (supportsHover) {
+            btn.addEventListener('mouseenter', () => {
+                if (pop.classList.contains('open')) return;
+                closeAll();
+                pop.classList.add('open');
+            });
+            group.addEventListener('mouseleave', () => {
+                pop.classList.remove('open');
+            });
+        }
+    });
+    document.addEventListener('click', () => closeAll());
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+}
+
 // 页面加载完成后初始化
 window.addEventListener('load', () => {
     init();
     setupSidebarControls();
     setupDragControls();
     setupGyroControls();
+    setupHelpTooltips();
 });
