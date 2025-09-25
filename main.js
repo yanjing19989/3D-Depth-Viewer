@@ -374,6 +374,19 @@ function setupDragControls() {
         e.preventDefault();
     });
 
+    // 触摸开始
+    canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 0) return;
+        const t = e.touches[0];
+        dragging = true;
+        canvas.style.cursor = 'grabbing';
+        startX = t.clientX;
+        startY = t.clientY;
+        startXVal = parseFloat(xSlider.value);
+        startYVal = parseFloat(ySlider.value);
+        e.preventDefault();
+    }, { passive: false });
+
     window.addEventListener('mousemove', (e) => {
         if (!dragging) return;
         const dx = e.clientX - startX;
@@ -384,6 +397,19 @@ function setupDragControls() {
         updateUI(newX, newY);
     });
 
+    // 触摸移动
+    window.addEventListener('touchmove', (e) => {
+        if (!dragging || e.touches.length === 0) return;
+        const t = e.touches[0];
+        const dx = t.clientX - startX;
+        const dy = t.clientY - startY;
+        const { deltaX, deltaY } = pxToDelta(dx, dy);
+        const newX = clamp(startXVal + deltaX, parseFloat(xSlider.min), parseFloat(xSlider.max));
+        const newY = clamp(startYVal + deltaY, parseFloat(ySlider.min), parseFloat(ySlider.max));
+        updateUI(newX, newY);
+        e.preventDefault();
+    }, { passive: false });
+
     function endDrag() {
         if (!dragging) return;
         dragging = false;
@@ -392,6 +418,8 @@ function setupDragControls() {
 
     window.addEventListener('mouseup', endDrag);
     window.addEventListener('mouseleave', endDrag);
+    window.addEventListener('touchend', endDrag);
+    window.addEventListener('touchcancel', endDrag);
 }
 
 // 陀螺仪控制
