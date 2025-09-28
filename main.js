@@ -299,7 +299,8 @@ function setupSidebarControls() {
     const rightSidebar = document.getElementById('rightSidebar');
     const toggleLeftBtn = document.getElementById('toggleLeftSidebar');
     const toggleRightBtn = document.getElementById('toggleRightSidebar');
-    
+    // 左栏默认打开
+    leftSidebar.classList.toggle('open');
     // 左侧栏控制
     toggleLeftBtn.addEventListener('click', () => {
         if (leftSidebar.classList.contains('open')) {
