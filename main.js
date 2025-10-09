@@ -441,8 +441,6 @@ function setupGyroControls() {
     let targetX = 0, targetY = 0;
     let currentX = parseFloat(xSlider.value), currentY = parseFloat(ySlider.value);
     const alpha = 0.15;
-    let baseBeta = null, baseGamma = null;
-    let startXAtEnable = parseFloat(xSlider.value), startYAtEnable = parseFloat(ySlider.value);
 
     function clamp(v, min, max) { 
         return Math.min(max, Math.max(min, v)); 
@@ -463,6 +461,9 @@ function setupGyroControls() {
     sensSlider.addEventListener('input', updateSensitivityUI);
     updateSensitivityUI();
 
+    // 将设备方向映射到 [-0.5, 0.5]
+    // 使用 gamma(水平左右) -> x_diff, beta(前后俯仰) -> y_diff
+    // 依据屏幕方向进行简单适配
     function orientationToDiff(beta, gamma) {
         const sens = parseFloat(sensSlider.value);
         const normGamma = clamp(gamma / 90, -1, 1);
@@ -476,28 +477,17 @@ function setupGyroControls() {
             const t = x; x = -y; y = t;
         }
 
+        x = clamp(x, parseFloat(xSlider.min), parseFloat(xSlider.max));
+        y = clamp(y, parseFloat(ySlider.min), parseFloat(ySlider.max));
         return { x, y };
     }
 
     function onDeviceOrientation(e) {
         const beta = (typeof e.beta === 'number') ? e.beta : 0;
         const gamma = (typeof e.gamma === 'number') ? e.gamma : 0;
-        
-        if (baseBeta === null || baseGamma === null) {
-            baseBeta = beta;
-            baseGamma = gamma;
-            targetX = startXAtEnable;
-            targetY = startYAtEnable;
-            return;
-        }
-
-        const dBeta = beta - baseBeta;
-        const dGamma = gamma - baseGamma;
-        const { x, y } = orientationToDiff(dBeta, dGamma);
-        const minX = parseFloat(xSlider.min), maxX = parseFloat(xSlider.max);
-        const minY = parseFloat(ySlider.min), maxY = parseFloat(ySlider.max);
-        targetX = clamp(startXAtEnable + x, minX, maxX);
-        targetY = clamp(startYAtEnable + y, minY, maxY);
+        const { x, y } = orientationToDiff(beta, gamma);
+        targetX = x;
+        targetY = y;
     }
 
     function animate() {
@@ -533,10 +523,6 @@ function setupGyroControls() {
         window.addEventListener('deviceorientation', onDeviceOrientation, true);
         currentX = parseFloat(xSlider.value);
         currentY = parseFloat(ySlider.value);
-        startXAtEnable = currentX;
-        startYAtEnable = currentY;
-        baseBeta = null;
-        baseGamma = null;
         targetX = currentX;
         targetY = currentY;
         animate();
@@ -550,8 +536,6 @@ function setupGyroControls() {
         window.removeEventListener('deviceorientation', onDeviceOrientation, true);
         if (rafId) cancelAnimationFrame(rafId);
         rafId = null;
-        baseBeta = null;
-        baseGamma = null;
     }
 
     btn.addEventListener('click', async () => {
