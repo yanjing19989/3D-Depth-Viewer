@@ -320,16 +320,16 @@ input[type="range"]::-moz-range-track {
   opacity: .8;
 }
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; margin-top: -7px;
-  width: 18px; height: 18px; border-radius: 50%;
+  -webkit-appearance: none; appearance: none; margin-top: -5px;
+  width: 15px; height: 15px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #ffffff, #dce6ff);
   border: 1px solid var(--border);
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   transition: transform var(--t-fast) ease;
 }
-input[type="range"]:active::-webkit-slider-thumb { transform: scale(0.96); }
+input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.5); }
 input[type="range"]::-moz-range-thumb {
-  width: 18px; height: 18px; border-radius: 50%;
+  width: 15px; height: 15px; border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #ffffff, #dce6ff);
   border: 1px solid var(--border);
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
@@ -337,8 +337,10 @@ input[type="range"]::-moz-range-thumb {
 
 /* 颜色选择器 */
 input[type="color"] {
-  width: 40px; height: 28px; padding: 0; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--panel-2);
+  width: 200px;
+  border-radius: 8px;
+  border: 1px solid var(--border); 
+  background: var(--panel-2);
 }
 
 /* 滚动条微样式（非必须） */
