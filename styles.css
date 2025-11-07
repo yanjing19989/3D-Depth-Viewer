@@ -349,9 +349,6 @@ input[type="color"] {
 *::-webkit-scrollbar-track { background: transparent; }
 
 /* 响应式优化 */
-@media (max-width: 1024px) {
-  .sidebar { width: 320px; }
-}
 @media (max-width: 768px) {
   .main-title { font-size: 20px; margin-top: 16px; }
   .canvas-container { border-radius: var(--radius-m); }
